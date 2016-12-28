@@ -197,30 +197,54 @@ public class Filter {
         }
 		return image;
 	}
-	public static BufferedImage sobel_filter(BufferedImage image){
-		BufferedImage Gx, Gy;
-		float[] x1 = {-1, 0, 1, -2, 0, 2, -1, 0, 1};
-        float[] y1 = {-1,-2,-1,0,0,0,1,2,1};
-        //2x2 matrix, with those two float arrays.
-        Kernel MatrixA = new Kernel(3, 3, x1);
-        Kernel MatrixB = new Kernel(3, 3, y1); 
-        ConvolveOp convolve1 = new ConvolveOp(MatrixA);
-        ConvolveOp convolve2 = new ConvolveOp(MatrixB);
-        Gx = convolve1.filter(image, null);
-        Gy = convolve2.filter(image, null);
-        for (int x=0; x<image.getWidth(); x++) {
-            for (int y=0; y<image.getHeight(); y++) {
-            	int derp = Gx.getRGB(x,y);
-                int herp = Gy.getRGB(x,y);
-                double result = Math.sqrt(Math.pow(derp, 2.0) + Math.pow(herp, 2.0));
-                if(result < 20726564.99) {
-                	image.setRGB(x,y,Color.white.getRGB());
-                } else {
-                	image.setRGB(x,y,Color.black.getRGB());
+	public static BufferedImage sobel_filter(BufferedImage bi){
+		int i,j;
+        int gx[]={1,0,-1,2,0,-2,1,0,-1};
+        int gy[]={1,2,1,0,0,0,-1,-2,-1};
+		double Gx[][], Gy[][], G[][];
+        int width = bi.getWidth();
+        int height = bi.getHeight();
+        int[] pixels = new int[width * height];
+        int[][] output = new int[width][height];       
+        int counter = 0;
+        for(i = 0 ; i < width ; i++ )
+        {
+            for(j = 0 ; j < height ; j++ )
+            {
+                output[i][j] = bi.getRGB(i, j);
+                counter = counter + 1;
+            }
+        }   
+        Gx = new double[width][height];
+        Gy = new double[width][height];
+        G  = new double[width][height];
+        for (i = 1 ; i < width - 1; i++) {
+            for (j = 1 ; j < height - 1; j++) {
+            	
+            	if (i==0 || i==width-2 || j==0 || j==height-1)
+            		Gx[i][j] = Gy[i][j] = G[i][j] = 0;
+                else{
+                    Gx[i][j] = output[i+1][j-1] + 2*output[i+1][j] + output[i+1][j+1] -
+                            output[i-1][j-1] - 2*output[i-1][j] - output[i-1][j+1];
+                    Gy[i][j] = output[i-1][j+1] + 2*output[i][j+1] + output[i+1][j+1] -
+                            output[i-1][j-1] - 2*output[i][j-1] - output[i+1][j-1];
+                    G[i][j]  = Math.abs(Gx[i][j]) + Math.abs(Gy[i][j]);
                 }
             }
-         }
-		return image;
+        }
+        counter = 0;
+        for(int ii = 0 ; ii < width ; ii++ )
+        {
+            for(int jj = 0 ; jj < height ; jj++ )
+            {
+                bi.setRGB(ii, jj, (int) G[ii][jj]);
+                counter = counter + 1;
+            }
+        }
+        BufferedImage outImg = new BufferedImage(width,height,BufferedImage.TYPE_BYTE_GRAY);
+        outImg.getRaster().setPixels(0,0,width,height,pixels);
+		
+		return bi;
 	}
 	public static BufferedImage scale_2_binary(BufferedImage image){
 	    int height = image.getHeight();

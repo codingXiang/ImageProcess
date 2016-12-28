@@ -11,7 +11,8 @@ public class Main {
 
 	public static void main(String[] args) {
 		// original image file path
-		String image_path = "C:\\Users\\CodingXiang\\Desktop\\image\\origin_image.png";
+//		String image_path = "\\Users\\user\\Desktop\\image\\origin_image.png";
+		String image_path = "/Users/user/Desktop/image/origin_image.png";
 		ImageHandler image_handler = new ImageHandler(image_path);
 		
 		// convert original image to gray

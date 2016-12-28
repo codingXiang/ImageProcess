@@ -25,7 +25,7 @@ public class ImageHandler {
 
 		try {
 			ImageIO.write(image, "jpg", new File(
-					"C:\\Users\\CodingXiang\\Desktop\\image\\" + filename + ".png"));
+					"/Users/user/Desktop/image/" + filename + ".png"));
 
 		} catch (IOException e) {
 			System.out.println(e.getMessage());
